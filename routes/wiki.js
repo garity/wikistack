@@ -7,9 +7,8 @@ const User = models.User;
 
 router.get('/', function(req, res, next){
 	//retrieve all wiki pages
-	models.Page.findAll({})
+	Page.findAll({})
 	.then(function(pages){
-		console.log(pages);
 		res.render('index.html', {pages: pages})
 	})
 	.catch(function(err){
@@ -75,26 +74,32 @@ router.get('/add', function(req, res, next){
 router.get('/:urlTitle', function(req, res, next){
 	const url = req.params.urlTitle;
 
-	models.Page.findOne({
+	Page.findOne({
 		where: {
 			urlTitle: url
 		}
 	})
 	.then(function(currPage){
-		console.log(currPage);
-		res.render('wikipage.html', {page: currPage});
+		const pageAuthor = currPage.getAuthor();
+		pageAuthor
+		.then(function(value){
+			res.render('wikipage.html', {page: currPage, author: value});
+		});
 	})
 	.catch(function(err){
 		res.render('error.html', err);
 	});
-	// res.send('hit dynamic route at ' + urlTitle);
 });
-
-
-
 
 router.get('/users/', function(req, res, next){
 	//get all users
+	User.findAll({})
+	.then(function(pages){
+		res.render('index.html', {pages: pages})
+	})
+	.catch(function(err){
+		res.render('error.html', err);
+	});
 });
 
 router.post('/users/', function(req, res, next){
@@ -102,7 +107,26 @@ router.post('/users/', function(req, res, next){
 })
 
 router.get('/users/:id', function(req, res, next){
-	//get a paticular user
+	//get a paticular user (author page)
+	Page.findAll({
+		where: {
+			authorId: req.params.id
+		}
+	})
+	.then(function(pages){
+		User.findOne({
+			where: {
+				id: req.params.id
+			}
+		})
+		.then(function(user){
+			console.log(user);
+			res.render('authorpage.html', {user: user, pages: pages})
+		})	
+	})
+	.catch(function(err){
+		res.render('error.html', err);
+	});
 });
 
 router.put('/users/:id', function(req, res, next){
