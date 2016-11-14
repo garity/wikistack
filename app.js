@@ -14,7 +14,6 @@ app.set('view engine', 'html');
 app.engine('html', nunjucks.render);
 
 //send all req to router files
-app.use('/', router);
 
 //morgan middleware
 app.use(morgan('dev'));
@@ -25,6 +24,11 @@ app.use(bodyParser.json());
 
 //serves up static files in public
 app.use(express.static('public'));
+
+app.get('/', (req, res, next) => {
+	res.render('index.html');
+});
+app.use('/wiki', router);
 
 //creates tables in db & starts up server
 models.User.sync()
