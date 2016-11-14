@@ -7,7 +7,14 @@ const User = models.User;
 
 router.get('/', function(req, res, next){
 	//retrieve all wiki pages
-	res.redirect('/');
+	models.Page.findAll({})
+	.then(function(pages){
+		console.log(pages);
+		res.render('index.html', {pages: pages})
+	})
+	.catch(function(err){
+		res.render('error.html', err);
+	});
 });
 
 router.post('/', function(req, res, next){
@@ -18,8 +25,8 @@ router.post('/', function(req, res, next){
 	});
 
 	page.save()
-	.then(function(content){
-		res.json(content);
+	.then(function(page){
+		res.redirect(page.route);
 	})
 	.catch(function(err){
 		res.render('error.html', err);
@@ -34,8 +41,21 @@ router.get('/add', function(req, res, next){
 
 
 router.get('/:urlTitle', function(req, res, next){
-	const urlTitle = req.params.urlTitle;
-	res.send('hit dynamic route at ' + urlTitle);
+	const url = req.params.urlTitle;
+
+	models.Page.findOne({
+		where: {
+			urlTitle: url
+		}
+	})
+	.then(function(currPage){
+		console.log(currPage);
+		res.render('wikipage.html', {page: currPage});
+	})
+	.catch(function(err){
+		res.render('error.html', err);
+	});
+	// res.send('hit dynamic route at ' + urlTitle);
 });
 
 

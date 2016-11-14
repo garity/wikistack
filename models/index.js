@@ -54,6 +54,7 @@ module.exports = {
 	User: User
 };
 
+//TODO fix case issue
 function generateUrlTitle (title) {
   if (title) {
     // Removes all non-alphanumeric characters from title
