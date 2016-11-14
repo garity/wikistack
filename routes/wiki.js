@@ -94,8 +94,9 @@ router.get('/:urlTitle', function(req, res, next){
 router.get('/users/', function(req, res, next){
 	//get all users
 	User.findAll({})
-	.then(function(pages){
-		res.render('index.html', {pages: pages})
+	.then(function(allUsers){
+		console.log(allUsers);
+		res.render('users.html', {users: allUsers})
 	})
 	.catch(function(err){
 		res.render('error.html', err);
