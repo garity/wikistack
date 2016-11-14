@@ -18,10 +18,28 @@ router.get('/', function(req, res, next){
 });
 
 router.post('/', function(req, res, next){
-	//submit new page to database
+	// console.log("req body", req.body);
+	// const page = Page.build({
+	// 	author: req.body.author,
+	// 	email: req.body.email,
+	// 	title: req.body.title,
+	// 	content: req.body.content,
+	// 	status: req.body.status
+	// });
+
+
+	// page.save()
+	// .then(function(page){
+	// 	res.redirect(page.route);
+	// })
+	// .catch(function(err){
+	// 	res.render('error.html', err);
+	// });
+
+
 	models.User.findOrCreate({
 		where:{
-			name: req.body.author,
+			name: req.body.name,
 			email: req.body.email
 		}
 	})
@@ -31,15 +49,20 @@ router.post('/', function(req, res, next){
 			content: req.body.content,
 			status: req.body.status
 		});
-		page.belongsTo(user);
-		page.save()
-	})
-	.then(function(page){
-		res.redirect(page.route);
-	})
-	.catch(function(err){
-		res.render('error.html', err);
-	});		
+
+		var author = user[0];
+		// page.belongsTo(user);
+		return page.save()
+		.then(function(page){
+			return page.setAuthor(author);
+		})
+		.then(function(page){
+			res.redirect(page.route);
+		})
+		.catch(function(err){
+			res.render('error.html', err);
+		});					
+	});
 });
 
 
