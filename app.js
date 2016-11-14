@@ -7,6 +7,7 @@ var bodyParser = require('body-parser');
 var nunjucks = require('nunjucks');
 var models = require('./models');
 var router = require('./routes/wiki.js');
+var userRouter = require('./routes/userRoutes.js');
 
 //nujucks middleware
 var env = nunjucks.configure('views', {noCache: true});
@@ -25,10 +26,12 @@ app.use(bodyParser.json());
 //serves up static files in public
 app.use(express.static('public'));
 
-app.get('/', (req, res, next) => {
-	res.render('index.html');
-});
+// app.get('/', (req, res, next) => {
+// 	res.render('index.html');
+// });
 app.use('/wiki', router);
+app.use('/userRoutes', userRouter);
+
 
 //creates tables in db & starts up server
 models.User.sync(/*{force: true}*/)
@@ -42,4 +45,7 @@ models.User.sync(/*{force: true}*/)
 })
 .catch(console.error);
 
-// app.listen(3000);
+app.use(function(err, req, res, next){
+	console.log(err);
+	res.status(500).send(err.message);
+})
