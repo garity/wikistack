@@ -10,6 +10,12 @@ var Page = db.define('page', {
 		type: Sequelize.STRING,
 		allowNull: false
 	},
+	route: {
+		type: Sequelize.VIRTUAL,
+		get: function() {
+			return '/wiki/' + this.urlTitle;
+		}
+	},
 	content: {
 		type: Sequelize.TEXT,
 		allowNull: false
@@ -35,7 +41,7 @@ var User = db.define('user', {
 	}
 });
 
-modules.exports = {
+module.exports = {
 	Page: Page,
 	User: User
 };

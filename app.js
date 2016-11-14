@@ -6,29 +6,36 @@ var morgan = require('morgan');
 var bodyParser = require('body-parser');
 var nunjucks = require('nunjucks');
 var models = require('./models');
+var router = require('./routes/wiki.js');
 
+//nujucks middleware
 var env = nunjucks.configure('views', {noCache: true});
-
 app.set('view engine', 'html');
-// when res.render works with html files, have it use nunjucks to do so
 app.engine('html', nunjucks.render);
 
+//send all req to router files
+app.use('/', router);
+
+//morgan middleware
 app.use(morgan('dev'));
 
+//bodyparser
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use(bodyParser.json());
 
+//serves up static files in public
 app.use(express.static('public'));
 
-models.User.sync({})
+//creates tables in db & starts up server
+models.User.sync()
 .then(function () {
-    return models.Page.sync({})
+    return models.Page.sync()
 })
 .then(function () {
-    server.listen(3001, function () {
-        console.log('Server is listening on port 3001!');
+    app.listen(3000, function () {
+        console.log('Server is listening on port 3000!');
     });
 })
 .catch(console.error);
 
-app.listen(3000);
+// app.listen(3000);
