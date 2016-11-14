@@ -19,18 +19,27 @@ router.get('/', function(req, res, next){
 
 router.post('/', function(req, res, next){
 	//submit new page to database
-	const page = Page.build({
-		title: req.body.title,
-		content: req.body.content
-	});
-
-	page.save()
+	models.User.findOrCreate({
+		where:{
+			name: req.body.author,
+			email: req.body.email
+		}
+	})
+	.then(function(user){
+		const page = Page.build({
+			title: req.body.title,
+			content: req.body.content,
+			status: req.body.status
+		});
+		page.belongsTo(user);
+		page.save()
+	})
 	.then(function(page){
 		res.redirect(page.route);
 	})
 	.catch(function(err){
 		res.render('error.html', err);
-	});
+	});		
 });
 
 

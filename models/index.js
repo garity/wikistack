@@ -54,6 +54,8 @@ module.exports = {
 	User: User
 };
 
+Page.belongsTo(User, {as: 'author'});
+
 //TODO fix case issue
 function generateUrlTitle (title) {
   if (title) {

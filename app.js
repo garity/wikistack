@@ -31,9 +31,9 @@ app.get('/', (req, res, next) => {
 app.use('/wiki', router);
 
 //creates tables in db & starts up server
-models.User.sync()
+models.User.sync({force: true})
 .then(function () {
-    return models.Page.sync()
+    return models.Page.sync({force: true})
 })
 .then(function () {
     app.listen(3000, function () {
